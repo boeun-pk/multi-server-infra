@@ -1,0 +1,42 @@
+# prometheus_setup.yml
+- name: Prometheus 설치 및 서비스 등록
+  hosts: lb_servers
+  become: yes
+  tasks:
+    - name: 1. Prometheus 다운로드 및 압축 해제
+      unarchive:
+        src: https://github.com/prometheus/prometheus/releases/download/v2.45.0/prometheus-2.45.0.linux-amd64.tar.gz
+        dest: /home/brynn/
+        remote_src: yes
+
+    - name: 2. Systemd 서비스 파일 생성
+      copy:
+        dest: /etc/systemd/system/prometheus.service
+        content: |
+          [Unit]
+          Description=Prometheus Monitoring
+          After=network.target
+          [Service]
+          User=brynn
+          WorkingDirectory=/home/brynn/prometheus-2.45.0.linux-amd64
+          ExecStart=/home/brynn/prometheus-2.45.0.linux-amd64/prometheus \
+                    --config.file=/home/brynn/prometheus-2.45.0.linux-amd64/prometheus.yml \
+                    --storage.tsdb.path=/home/brynn/prometheus-2.45.0.linux-amd64/data
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: 3. Prometheus 서비스 활성화 및 시작
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
+        daemon_reload: yes
+
+    - name: 4. 방화벽(UFW) 9090번, 3000번 포트 허용
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - '9090'
+        - '3000'

@@ -1,0 +1,40 @@
+- name: 로드밸런서(Nginx) 구축 및 동적 라우팅 설정 
+  hosts: lb_servers
+  become: yes 
+  
+  tasks:
+    - name: 1. Nginx 패키지 설치
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+        
+    - name: 2. 기존 기본 설정 파일 삭제
+      file: 
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+        
+    - name: 3. 동적 로드밸런서 설정 파일 배포 (Jinja2 Template) 
+      template:
+        src: lb_default.conf.j2
+        dest: /etc/nginx/conf.d/load_balancer.conf
+      notify: Restart Nginx
+      
+    - name: 4. 방화벽(UFW) 80번 포트 허용 
+      ufw:
+        rule: allow
+        port: '80'
+        proto: tcp 
+        
+    - name: 5. Nginx 서비스 시작 및 활성화 
+      systemd: 
+        name: nginx
+        enabled: yes
+        state: started 
+        
+        
+  handlers:
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted

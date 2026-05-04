@@ -1,0 +1,6 @@
+# 인프라 전체 자동화 마스터 플레이북 
+- import_playbook: mariadb_setup.yml
+- import_playbook: web_setup.yml
+- import_playbook: lb_setup.yml
+- import_playbook: node_exporter_setup.yml
+- import_playbook: prometheus_setup.yml

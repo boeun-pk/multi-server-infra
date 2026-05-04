@@ -1,0 +1,43 @@
+# node_exporter_setup.yml
+- name: Node Exporter 서비스 등록 및 자동화
+  hosts: all
+  become: yes
+  tasks:
+    - name: 1. Node Exporter 다운로드 및 압축 해제
+      unarchive:
+        src: https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - name: 2. Node Exporter 실행 파일을 표준 경로로 복사
+      copy:
+        src: /tmp/node_exporter-1.6.1.linux-amd64/node_exporter
+        dest: /usr/local/bin/node_exporter
+        mode: '0755'
+        remote_src: yes
+
+    - name: 3. Systemd 서비스 유닛 파일 생성
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
+          [Service]
+          User=brynn
+          ExecStart=/usr/local/bin/node_exporter
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: 4. Node Exporter 서비스 활성화 및 시작
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+        daemon_reload: yes
+
+    - name: 5. 방화벽(UFW) 9100번 포트 허용
+      ufw:
+        rule: allow
+        port: '9100'
+        proto: tcp

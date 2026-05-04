@@ -1,0 +1,54 @@
+<?php 
+$host = "{{ db_host }}";   // 앤서블 변수가 들어갈 자리
+$user = "{{ db_user }}";
+$pass = "{{ db_password }}"; 
+$db = "{{ db_name }}";
+$server_name = gethostname();
+
+
+// $conn = new mysqli($host, $user, $pw, $db);
+
+// if($conn->connect_error) {
+//   die("연결 실패: " . $conn->connect_error);
+//   }
+  
+// 접속 로그 기록 예시 (기존에 만들었던 로직 넣기) 
+
+// 1. DB 연결 시도
+$conn = new mysqli($host, $user, $pass, $db);
+
+// 연결 에러 시 화면에 에러 메시지 출력
+if ($conn->connect_error) {
+die("<h2>🚨 DB Connection Failed: " . $conn->connect_error . "</h2>");
+}
+echo "<h2 style='color:blue;'>✅ DB Connection Success! (Connected to MariaDB)</h2>";
+echo "<h3>Current Server: " . $server_name . "</h3>";
+
+// 2. 누군가 이 페이지에 접속할 때마다 DB에 기록 저장 (INSERT)
+$insert_sql = "INSERT INTO access_log (server_name, message) VALUES ('$server_name', 'Hello! Traffic handled by $server_name')";
+$conn->query($insert_sql);
+
+// 3. DB에 저장된 최근 방문 기록 10개 가져오기 (SELECT)
+$select_sql = "SELECT * FROM access_log ORDER BY id DESC LIMIT 10";
+$result = $conn->query($select_sql);
+
+// 4. 가져온 데이터를 표(Table) 형태로 출력
+echo "<table border='1' cellpadding='10' style='border-collapse: collapse; text-align: center;'>";
+echo "<tr style='background-color: #f2f2f2;'><th>ID</th><th>Server Name</th><th>Message</th><th>Time</th></tr>";
+
+if ($result->num_rows > 0) {
+while($row = $result->fetch_assoc()) {
+echo "<tr>";
+echo "<td>" . $row["id"]. "</td>";
+echo "<td><b>" . $row["server_name"]. "</b></td>";
+echo "<td>" . $row["message"]. "</td>";
+echo "<td>" . $row["created_at"]. "</td>";
+echo "</tr>";
+}
+} else {
+echo "<tr><td colspan='4'>No logs found</td></tr>";
+}
+echo "</table>";
+
+$conn->close();
+?>

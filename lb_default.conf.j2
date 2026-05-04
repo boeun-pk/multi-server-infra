@@ -1,0 +1,17 @@
+upstream backend_servers {
+  # 주소록의 [web_servers] 그룹에 있는 IP들을 자동으로 가져와서 채워놓음 
+  {% for host in groups['web_servers'] %}
+    server {{ host }}:80;
+  {% endfor %}
+}
+  
+server { 
+  listen 80;
+  server_name _;
+    
+  location / {
+    proxy_pass http://backend_servers;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+}

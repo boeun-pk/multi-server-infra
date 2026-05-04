@@ -1,0 +1,10 @@
+- name: first_playbook 
+  hosts: 192.168.56.101  # web-01 서버. 만약 추가하고 싶다면 쉼표로 이으면 됨 
+  become: yes   # 최고관리자 권한(sudo)을 사용할 것인가? 
+  
+  tasks:
+    - name: 1. 서버에 테스트용 빈 폴더 만들기 
+      file: 
+        path: /home/brynn/ansible_workspace
+        state: directory
+        mode: '0755'

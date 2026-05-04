@@ -1,0 +1,76 @@
+- name: MariaDB 데이터베이스 서버 구축 
+  hosts: db_servers  # hosts.ini 에 정의한 192.168.56.102 
+  become: yes 
+  
+  # 변수 설정: 보안을 위해 비밀번호 등 따로 정의 
+  vars: 
+    db_name: my_database
+    db_user: user1
+    db_password: "password123!"
+    
+  tasks:
+    - name: 1. MariaDB 관련 패키지 및 파이썬 라이브러리 설치 
+      apt:
+        name:
+          - mariadb-server
+          - python3-pymysql   # ansible 이 DB를 제어하기 위해 필수 설치
+        state: present 
+        update_cache: yes
+         
+    - name: 2. MariaDB 서비스 실행 및 활성화 
+      systemd:
+        name: mariadb
+        enabled: yes
+        state: started
+         
+    - name: 3. 원격 접속 허용 설정 변경 (bind-address 수정) 
+      # 기본은 127.0.0.1 (로컬전용) 이라서 0.0.0.0 으로 바꿔야 외부에서 접속 가능 
+      lineinfile:
+        path: /etc/mysql/mariadb.conf.d/50-server.cnf
+        regexp: '^bind-address'
+        line: 'bind-address	= 0.0.0.0'
+      notify: Restart MariaDB  # 설정이 바뀌면 아래 핸들러를 실행 
+       
+    - name: 4. 데이터베이스 생성 
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+         
+         
+    - name: 5. DB 사용자 생성 및 모든 권한 부여 
+      # '%' 는 모든 IP에서의 접속을 허용한다는 뜻 
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: "{{ db_name }}.*:ALL"
+        host: "%"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+         
+    - name: 6. 방화벽(UFW) 3306 포트 허용 
+      ufw:
+        rule: allow 
+        port: '3306'
+        proto: tcp
+    
+    - name: 7. 접속 로그 저장을 위한 테이블 생성 (SQL 자동화) 
+      mysql_query: 
+        login_db: "{{ db_name }}"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        query: |
+          CREATE TABLE IF NOT EXISTS access_log (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            server_name VARCHAR(50) NOT NULL,
+            message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
+             
+         
+  # [Handlers] 작업 중 'notify'가 발생했을 때만 실행되는 섹션 
+  handlers:
+    - name: Restart MariaDB
+      systemd: 
+        name: mariadb
+        state: restarted

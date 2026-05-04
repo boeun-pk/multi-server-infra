@@ -1,0 +1,67 @@
+- name: Web 서버(Nginx + PHP) 구축 및 소스 배포
+  hosts: web_servers
+  become: yes
+    
+  vars:
+    db_host: "192.168.56.102" # DB 서버 IP
+    db_name: "my_database"
+    db_user: "user1"
+    db_password: "password123!"
+    # server_name: "{{ inventory_hostname }}"
+
+
+  tasks:
+    - name: 1. Nginx 및 PHP 관련 패키지 설치
+      apt:
+        name:
+          - nginx
+          - php-fpm
+          - php-mysql
+        state: present
+        update_cache: yes
+    
+    - name: 2. PHP 접속 테스트 페이지 배포 (Template 활용)    
+      # .j2 템플릿 파일을 타겟 서버의 웹 루트로 복사하면서 변수를 치환합니다.
+      template:
+        src: index.php.j2
+        dest: /var/www/html/index.php
+        mode: '0644'
+
+
+    - name: 2-1. Nginx PHP 연동 설정 파일 배포
+      template:
+        src: nginx_web.conf.j2
+        dest: /etc/nginx/sites-available/default
+      notify: Restart Nginx
+
+
+    - name: 2-2. Nginx 설정 활성화 (심볼릭 링크)
+      file:
+        src: /etc/nginx/sites-available/default
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+
+
+    - name: 3. 기존 기본 index.html 삭제 (PHP를 먼저 보여주기 위해)
+      file:
+        path: /var/www/html/index.html
+        state: absent
+    
+    - name: 4. 방화벽(UFW) 80번 포트 허용
+      ufw:
+        rule: allow
+        port: '80'
+        proto: tcp
+    
+    - name: 5. Nginx 서비스 시작 및 활성화
+      systemd:
+        name: nginx
+        enabled: yes
+        state: started
+
+
+  handlers:
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
