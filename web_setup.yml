@@ -32,14 +32,17 @@
       template:
         src: nginx_web.conf.j2
         dest: /etc/nginx/sites-available/default
-      notify: Restart Nginx
+
+    - name: 2-2. nginx 문법 검사
+      command: nginx -t    
 
 
-    - name: 2-2. Nginx 설정 활성화 (심볼릭 링크)
+    - name: 2-3. Nginx 설정 활성화 (심볼릭 링크)
       file:
         src: /etc/nginx/sites-available/default
         dest: /etc/nginx/sites-enabled/default
         state: link
+      notify: Restart Nginx
 
 
     - name: 3. 기존 기본 index.html 삭제 (PHP를 먼저 보여주기 위해)
@@ -65,3 +68,4 @@
       systemd:
         name: nginx
         state: restarted
+        daemon_reload: yes

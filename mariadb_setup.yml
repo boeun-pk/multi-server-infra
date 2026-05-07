@@ -48,11 +48,17 @@
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
          
-    - name: 6. 방화벽(UFW) 3306 포트 허용 
+
+    - name: 6. 방화벽(UFW) 포트 허용
       ufw:
-        rule: allow 
-        port: '3306'
+        rule: allow
+        port: "{{ item }}"
         proto: tcp
+      loop:
+        - '3306'
+        - '22' 
+
+      
     
     - name: 7. 접속 로그 저장을 위한 테이블 생성 (SQL 자동화) 
       mysql_query: 

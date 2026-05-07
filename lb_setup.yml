@@ -18,8 +18,13 @@
       template:
         src: lb_default.conf.j2
         dest: /etc/nginx/conf.d/load_balancer.conf
+   
+
+    - name: 3-1. nginx 문법 검사 
+      command: nginx -t 
       notify: Restart Nginx
-      
+   
+        
     - name: 4. 방화벽(UFW) 80번 포트 허용 
       ufw:
         rule: allow
@@ -38,3 +43,4 @@
       systemd:
         name: nginx
         state: restarted
+        daemon_reload: yes 

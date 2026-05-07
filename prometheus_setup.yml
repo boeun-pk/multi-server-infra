@@ -25,6 +25,15 @@
           [Install]
           WantedBy=multi-user.target
 
+
+    - name: 2-1. Prometheus 설정 파일 배포
+      copy:
+        src: prometheus.yml
+        dest: /home/brynn/prometheus-2.45.0.linux-amd64/prometheus.yml
+
+
+
+    
     - name: 3. Prometheus 서비스 활성화 및 시작
       systemd:
         name: prometheus
