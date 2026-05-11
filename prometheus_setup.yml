@@ -32,8 +32,51 @@
         dest: /home/brynn/prometheus-2.45.0.linux-amd64/prometheus.yml
 
 
+    - name: 2-2. Prometheus data 디렉토리 생성
+      file:
+        path: /home/brynn/prometheus-2.45.0.linux-amd64/data
+        state: directory
+        owner: brynn
+        group: brynn
+        mode: '0755'
 
-    
+
+    - name: 2-3. Grafana 필수 패키지 설치
+      apt:
+        name:
+          - apt-transport-https
+          - software-properties-common
+        state: present
+
+    - name: 2-4. Grafana GPG 키 디렉토리 생성
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: 2-5. Grafana GPG 키 추가
+      shell: wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+
+    - name: 2-6. Grafana 저장소 추가
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+        state: present
+
+    - name: 2-7. Grafana 설치
+      apt:
+        name: grafana
+        state: present
+        update_cache: yes
+
+    - name: 2-8. Grafana 서비스 시작 및 활성화
+      systemd:
+        name: grafana-server
+        enabled: yes
+        state: started
+        daemon_reload: yes
+
+
+
     - name: 3. Prometheus 서비스 활성화 및 시작
       systemd:
         name: prometheus
@@ -47,5 +90,5 @@
         port: "{{ item }}"
         proto: tcp
       loop:
-        - '9090'
-        - '3000'
+        - '9090'  # prometheus
+        - '3000'  # grafana

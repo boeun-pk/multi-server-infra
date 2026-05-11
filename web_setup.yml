@@ -47,7 +47,7 @@
 
     - name: 3. 기존 기본 index.html 삭제 (PHP를 먼저 보여주기 위해)
       file:
-        path: /var/www/html/index.html
+        path: /var/www/html/index.nginx-debian.html
         state: absent
     
     - name: 4. 방화벽(UFW) 80번 포트 허용
