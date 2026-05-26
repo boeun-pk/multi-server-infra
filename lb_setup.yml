@@ -16,7 +16,7 @@
         
     - name: 3. 동적 로드밸런서 설정 파일 배포 (Jinja2 Template) 
       template:
-        src: lb_default.conf.j2
+        src: templates/lb_default.conf.j2   # templates 폴더로 수정 
         dest: /etc/nginx/conf.d/load_balancer.conf
    
 

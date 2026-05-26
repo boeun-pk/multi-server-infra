@@ -6,7 +6,7 @@
   vars: 
     db_name: my_database
     db_user: user1
-    db_password: "password123!"
+    db_password: "{{ vault_db_pass }}"
     
   tasks:
     - name: 1. MariaDB 관련 패키지 및 파이썬 라이브러리 설치 

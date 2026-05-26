@@ -6,7 +6,7 @@
     db_host: "192.168.56.102" # DB 서버 IP
     db_name: "my_database"
     db_user: "user1"
-    db_password: "password123!"
+    db_password: "{{ vault_db_pass }}"  # vault 로 관리
     # server_name: "{{ inventory_hostname }}"
 
 
@@ -23,14 +23,14 @@
     - name: 2. PHP 접속 테스트 페이지 배포 (Template 활용)    
       # .j2 템플릿 파일을 타겟 서버의 웹 루트로 복사하면서 변수를 치환합니다.
       template:
-        src: index.php.j2
+        src: templates/index.php.j2   # template 폴더로 수정
         dest: /var/www/html/index.php
         mode: '0644'
 
 
     - name: 2-1. Nginx PHP 연동 설정 파일 배포
       template:
-        src: nginx_web.conf.j2
+        src: templates/nginx_web.conf.j2  # template 폴더로 수정 
         dest: /etc/nginx/sites-available/default
 
     - name: 2-2. nginx 문법 검사
