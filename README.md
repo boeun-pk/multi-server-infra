@@ -64,6 +64,41 @@ multi-server-infra/
 
 ## 트러블슈팅
 
+###  DB 백업 자동화 스크립트 실행 거부 (MySQL Host 권한 분리)
+
+| 구분 | 내용 |
+|---|---|
+| 문제 상황 | Crontab에 등록할 백업 쉘 스크립트(db_backup.sh)를 web_user 계정으로 실행 테스트했으나, Access denied for user 'web_user'@'localhost' 에러가 발생하며 백업에 실패 |
+| 원인 파악 | 웹 서버 연동 시 외부 접속을 위해 'web_user'@'192.168.56.%' 권한만 부여했었으나, MariaDB는 접속하는 IP(Host)를 엄격히 분리하기 때문에 DB 서버 내부(로컬)에서 스크립트를 실행할 때 필요한 localhost 출입 권한이 없어 차단된 것 |
+| 해결 방법 | MariaDB에 root 계정으로 접속하여 CREATE USER 'web_user'@'localhost'로 로컬 전용 계정을 추가 생성하고, 타겟 DB에 권한을 부여(GRANT ALL)하여 스크립트가 정상 동작하도록 해결 |
+| 결과 | Crontab 이 정상적으로 실행됨 |
+
+
+###  Crontab 스케줄링 미작동 (유저 권한 및 스케줄러 환경 격리)
+
+| 구분 | 내용 |
+|---|---|
+| 문제 상황 | 매일 새벽 3시에 백업되도록 크론탭을 설정했으나 실행되지 않았고, 터미널에서 crontab -l을 입력해도 등록된 스케줄이 보이지 않았음 |
+| 원인 파악 | 스케줄을 등록할 때 무의식적으로 sudo crontab -e를 입력하여, 현재 로그인한 일반 유저의 크론탭이 아닌 root 유저의 독립된 크론탭에 백업 작업이 등록되었기 때문. 또한 백업 디렉터리의 소유권을 일반 유저로 변경해 둔 상태라 권한 충돌도 있었 |
+| 해결 방법 | root 크론탭의 내용을 삭제하고, 일반 유저 권한으로 crontab -e를 다시 실행해 스케줄을 올바르게 등록했습니다. 이후 syslog를 통해 CRON 실행 로그를 확인하여 동작을 완벽히 검증 |
+| 결과 | Crontab 이 정상적으로 실행되어 스케줄링이 적용된 것을 확인함 |
+
+
+### Ansible 자동화 배포 후 403 Forbidden 에러 (Nginx 라우팅 설정)
+
+| 구분 | 내용 |
+|---|---|
+| 문제 상황 | Ansible Playbook으로 Web 서버를 구축할 때, 불필요한 기본 환영 페이지(index.nginx-debian.html)를 삭제하는 Task를 추가했습니다. 배포 완료 후 웹에 접속하자 403 Forbidden 에러가 발생 |
+| 원인 파악 | error.log를 확인해 보니 Nginx의 디렉터리 인덱싱 차단 문제였습니다. 기존에는 기본 html 파일이 있어 접속이 되었으나, 삭제 후 Nginx 설정 파일의 try_files $uri $uri/ =404; 구문이 대체할 index.php를 찾지 못하고 라우팅을 차단한 구조적 에러였 |
+| 해결 방법 | Jinja2 템플릿의 Nginx 설정 파일(nginx_web.conf.j2)에서 location 블록을 try_files $uri $uri/ /index.php?$args;로 수정하여 정적 파일이 없을 때 PHP로 정상 라우팅되도록 수정 후 Playbook을 다시 배포 |
+| 결과 |  |
+
+
+
+
+
+
+
 ### CPU 모니터링 스크립트 오류 및 측정 방식 개선
 
 | 구분 | 내용 |
