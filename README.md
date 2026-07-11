@@ -32,7 +32,7 @@ Prometheus, Grafana 모니터링 대시보드로 리소스를 실시간 감시�
 
 ## 디렉토리 구조
 
-multi-server-infra/
+multi-server-infra/ \n
 │
 ├── site.yml                    # 마스터 플레이북 - 전체 인프라 자동 구축
 ├── hosts.yml                   # 인벤토리 - 서버 목록 및 vault 변수 연결
