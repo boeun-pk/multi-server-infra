@@ -31,7 +31,7 @@ Prometheus, Grafana 모니터링 대시보드로 리소스를 실시간 감시�
 
 
 ## 디렉토리 구조
-'''
+```
 multi-server-infra/
 │
 ├── site.yml                    # 마스터 플레이북 - 전체 인프라 자동 구축
@@ -54,7 +54,7 @@ multi-server-infra/
     ├── index.php.j2            # PHP 웹 페이지 템플릿 (DB 연결 및 접속 로그)
     ├── lb_default.conf.j2      # Nginx 로드밸런서 설정 템플릿
     └── nginx_web.conf.j2       # Nginx + PHP-FPM 연동 설정 템플릿
-'''
+```
 
 
 
