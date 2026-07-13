@@ -94,9 +94,9 @@ multi-server-infra/
 
 | 구분 | 내용 |
 |---|---|
-| 문제 상황 | Ansible Playbook으로 Web 서버를 구축할 때, 불필요한 기본 환영 페이지(index.nginx-debian.html)를 삭제하는 Task를 추가했습니다. 배포 완료 후 웹에 접속하자 403 Forbidden 에러가 발생 |
-| 원인 파악 | error.log를 확인해 보니 Nginx의 디렉터리 인덱싱 차단 문제였습니다. 기존에는 기본 html 파일이 있어 접속이 되었으나, 삭제 후 Nginx 설정 파일의 try_files $uri $uri/ =404; 구문이 대체할 index.php를 찾지 못하고 라우팅을 차단한 구조적 에러였 |
-| 해결 방법 | Jinja2 템플릿의 Nginx 설정 파일(nginx_web.conf.j2)에서 location 블록을 try_files $uri $uri/ /index.php?$args;로 수정하여 정적 파일이 없을 때 PHP로 정상 라우팅되도록 수정 후 Playbook을 다시 배포 |
+| 문제 상황 | Ansible Playbook으로 Web 서버를 구축할 때, 불필요한 기본 환영 페이지(index.nginx-debian.html)를 삭제하는 Task를 추가함. 그러나 배포 완료 후 웹에 접속하자 403 Forbidden 에러가 발생 |
+| 원인 파악 | error.log를 확인해 보니 Nginx의 디렉터리 인덱싱 차단 문제. 기존에는 기본 html 파일이 있어 접속이 되었으나, 삭제 후 Nginx 설정 파일의 try_files $uri $uri/ =404; 구문이 대체할 index.php를 찾지 못하고 라우팅을 차단한 구조적 에러였음. |
+| 해결 방법 | Jinja2 템플릿의 Nginx 설정 파일(nginx_web.conf.j2)에서 location 블록을 try_files $uri $uri/ /index.php?$args;로 수정하여 정적 파일이 없을 때 PHP로 정상 라우팅되도록 수정 후 Playbook을 다시 배포함 |
 | 결과 |  |
 
 
@@ -114,9 +114,14 @@ multi-server-infra/
 
 
 
+
 ## 실행 방법
 git clone부터 site.yml 실행까지 순서
 $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
+
+
+## 실행 결과 스크린샷 
+
 
 
 ## 회고 및 개선할 점
