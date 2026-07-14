@@ -14,7 +14,7 @@ Prometheus, Grafana 모니터링 대시보드로 리소스를 실시간 감시�
 ## 아키텍처
 
 <p align="center">
-    ![architecture](architecture.png)
+    <img width="660" height="481" alt="architecture" src="https://github.com/user-attachments/assets/87a4003b-d94f-4b3d-aac8-b33ddc5fb519" />
 </p>
 
 - 0호기(LB) → 1호기/3호기(Web) → 2호기(DB)
