@@ -29,7 +29,7 @@ Prometheus, Grafana 모니터링 대시보드로 리소스를 실시간 감시�
 ![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=flat&logo=ansible&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&logoColor=white)
-
+<br>
 
 
 ## 디렉토리 구조
@@ -57,7 +57,7 @@ multi-server-infra/
     ├── lb_default.conf.j2      # Nginx 로드밸런서 설정 템플릿
     └── nginx_web.conf.j2       # Nginx + PHP-FPM 연동 설정 템플릿
 ```
-
+<br>
 
 ## 핵심 수행 내용 
 - Virtual box 네트워크 (NAT + Host-only) 를 활용한 독립적인 사설 인프라 환경망 분리
@@ -66,6 +66,7 @@ multi-server-infra/
 - 가용성 확보 및 OOM 방지를 위한 Swap 메모리 구성 및 SSH 키 기반 인증을 통한 인프라 보안 강화 
 - 모든 구축 과정을 모듈화한 마스터 플레이북 (site.yml) 을 작성하여 초기 서버 세팅부터 모니터링 환경 구축까지의 과정을 자동화
 
+<br>
 
 ## 트러블슈팅
 
@@ -112,13 +113,14 @@ multi-server-infra/
 
 
 
-
+<br>
 
 ## 실행 방법
 git clone부터 site.yml 실행까지 순서
 
 $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
+<br>
 
 ## 실행 결과 스크린샷 
 <p align="center">
