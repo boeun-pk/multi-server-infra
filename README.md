@@ -73,9 +73,9 @@ multi-server-infra/
 | 구분 | 내용 |
 |---|---|
 | 문제 상황 | Crontab에 등록할 백업 쉘 스크립트(db_backup.sh)를 web_user 계정으로 실행 테스트했으나, Access denied for user 'web_user'@'localhost' 에러가 발생하며 백업에 실패 |
-| 원인 파악 | 웹 서버 연동 시 외부 접속을 위해 'web_user'@'192.168.56.%' 권한만 부여했었으나, MariaDB는 접속하는 IP(Host)를 엄격히 분리하기 때문에 DB 서버 내부(로컬)에서 스크립트를 실행할 때 필요한 localhost 출입 권한이 없어 차단된 것 |
+| 원인 파악 | 웹 서버 연동 시 외부 접속을 위해 'web_user'@'192.168.56.%' 권한만 부여했었으나, MariaDB는 접속하는 IP(Host)를 엄격히 분리하기 때문에 DB 서버 내부(로컬)에서 스크립트를 실행할 때 필요한 localhost 출입 권한이 없어 차단됨 |
 | 해결 방법 | MariaDB에 root 계정으로 접속하여 CREATE USER 'web_user'@'localhost'로 로컬 전용 계정을 추가 생성하고, 타겟 DB에 권한을 부여(GRANT ALL)하여 스크립트가 정상 동작하도록 해결 |
-| 결과 | db_backup.sh 파일 스크립트가 정상적으로 실행되어 파일이 생성되는 것을 확인함  |
+| 결과 | 스크립트 수동 실행 시 에러 없이 정상 동작하며 백업 파일의 데이터 무결성까지 확인함 |
 
 
 ###  Crontab 스케줄링 미작동 (유저 권한 및 스케줄러 환경 격리)
@@ -101,8 +101,6 @@ multi-server-infra/
 <br>
 
 ## 실행 방법
-git clone부터 site.yml 실행까지 순서  
-
 $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
 <br>
@@ -126,10 +124,15 @@ $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
 
 ## 회고 및 개선할 점
-이걸 aws 에 올려서 서버 만들고 바로 자동화 툴로 서버 세팅하는 것도 하려고 계획함. 
 
-실제 가동되는 서비스를 올려보지 못한 것이 아쉬움 
+구축한 서버 위에 실제 가동되는 서비스를 올려보지 못한 것이 아쉬움이 남음.   
+또한 이번 트러블슈팅 과정을 되돌아보면, 발생한 문제 대부분이 root와 일반 유저, localhost와 외부 IP처럼  
+계정 및 권한 분리에 대한 이해 부족에서 비롯되었다는 공통점이 있었음.   
+Ansible로 서버 구축을 자동화했음에도 불구하고, crontab 등록 계정이나 DB 접속 권한처럼  
+사람이 직접 확인하고 개입해야 하는 부분이 여전히 많았다는 점도 아쉬웠음.  
 
+이후에는 Playbook 안에 권한 검증 Task(예: crontab 등록 확인, DB 계정 존재 여부 확인)를 추가하여 더 견고한 자동화를 만들어보고 싶고,    
+AWS EC2 서버를 생성해서 여기서 만든 Ansible 자동화 Playbook으로 한 번에 서버 세팅하는 것도 시도해보고 싶음.  
 
 
 
