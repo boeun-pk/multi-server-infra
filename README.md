@@ -117,6 +117,7 @@ multi-server-infra/
 
 ## 실행 방법
 git clone부터 site.yml 실행까지 순서
+
 $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
 
