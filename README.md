@@ -14,8 +14,6 @@ Prometheus, Grafana 모니터링 대시보드로 리소스를 실시간 감시�
 ## 아키텍처
 
 ![architecture](architecture.png)
-<img width="506" height="457" alt="image" src="https://github.com/user-attachments/assets/b6933e71-bce2-4875-b986-9fc29444a6f0" />
-
 
 - 0호기(LB) → 1호기/3호기(Web) → 2호기(DB)
 - 1호기 장애 시 3호기로 자동 전환
@@ -124,8 +122,9 @@ $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
 
 ## 실행 결과 스크린샷 
-![load_balancing](load_balancing.png)
-![grafana_result](grafana_result.png)
+<img width="808" height="647" alt="load_balancing" src="https://github.com/user-attachments/assets/6524794a-e7a6-43c7-9c69-8305b2f61ad5" />
+
+<img width="1280" height="674" alt="grafana_result" src="https://github.com/user-attachments/assets/6f358c9e-bcfc-4583-baba-d9687dad3e5b" />
 
 
 ## 회고 및 개선할 점
