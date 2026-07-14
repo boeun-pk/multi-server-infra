@@ -122,7 +122,8 @@ $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
 
 ## 실행 결과 스크린샷 
-
+![load_balancing](load_balancing.png)
+![grafana_result](grafana_result.png)
 
 
 ## 회고 및 개선할 점
