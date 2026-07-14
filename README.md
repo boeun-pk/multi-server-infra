@@ -59,9 +59,6 @@ multi-server-infra/
 ```
 
 
-## 주요 기능 
-- 다중 서버 구축, 자동화, 로드밸런싱, 모니터링
-
 ## 핵심 수행 내용 
 - Virtual box 네트워크 (NAT + Host-only) 를 활용한 독립적인 사설 인프라 환경망 분리
 - Nginx Upstream 모듈을 활용한 L7 로드밸런서 구축 및 Web 서버 트래픽 분산 
