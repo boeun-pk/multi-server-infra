@@ -1,12 +1,10 @@
 # 리눅스 Ubuntu 기반 3-Tier 다중 서버 인프라 구축
 
-Ubuntu 기반 가상 머신 4대로 로드밸런서·웹서버·DB서버를 분리 구성하고,
-Prometheus, Grafana 모니터링 대시보드로 리소스를 실시간 감시할 수 있는 프로젝트입니다.
-
-서비스 가용성 확보를 위해 L7 로드밸런싱이 적용된 Ubuntu 기반 3-Tier 아키텍처를 구축하고, 
+Ubuntu 기반 가상 머신 4대로 로드밸런서·웹서버·DB서버를 분리하여 L7 로드밸런싱이 적용된 3-Tier 아키텍처를 구축하고, 
 리소스 실시간 모니터링을 위해 Prometheus, Grafana 모니터링 대시보드 환경을 구성했습니다. 
 이후 인프라의 재사용성과 배포 속도 향상을 위해 전체 구축 과정을 Ansible로 자동화한 프로젝트입니다. 
 <br>
+
 > 진행 기간: 2026.04 ~ 2026.05
 <br>
 
@@ -97,26 +95,13 @@ multi-server-infra/
 | 문제 상황 | Ansible Playbook으로 Web 서버를 구축할 때, 불필요한 기본 환영 페이지(index.nginx-debian.html)를 삭제하는 Task를 추가함. 그러나 배포 완료 후 웹에 접속하자 403 Forbidden 에러가 발생 |
 | 원인 파악 | error.log를 확인해 보니 Nginx의 디렉터리 인덱싱 차단 문제. 기존에는 기본 html 파일이 있어 접속이 되었으나, 삭제 후 Nginx 설정 파일의 try_files $uri $uri/ =404; 구문이 대체할 index.php를 찾지 못하고 라우팅을 차단한 구조적 에러였음. |
 | 해결 방법 | Jinja2 템플릿의 Nginx 설정 파일(nginx_web.conf.j2)에서 location 블록을 try_files $uri $uri/ /index.php?$args;로 수정하여 정적 파일이 없을 때 PHP로 정상 라우팅되도록 수정 후 Playbook을 다시 배포함 |
-| 결과 |  |
-
-
-
-
-### CPU 모니터링 스크립트 오류 및 측정 방식 개선
-
-| 구분 | 내용 |
-|---|---|
-| 문제 상황 | CPU 사용량이 100%로 잘못 표시됨 |
-| 원인 파악 | awk 계산 방식이 서버 출력 포맷과 불일치 |
-| 해결 방법 | mpstat으로 측정 방식 변경 |
-| 결과 | 실제 부하가 정상적으로 반영됨 |
-
+| 결과 | Playbook 재배포 후 웹 접속 시 403 Forbidden 에러 없이 index.php로 정상 라우팅되는 것을 확인함. 이후 동일한 구성으로 배포한 서버들에도 문제없이 적용됨. |
 
 
 <br>
 
 ## 실행 방법
-git clone부터 site.yml 실행까지 순서
+git clone부터 site.yml 실행까지 순서  
 
 $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
