@@ -124,10 +124,14 @@ $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 ## 실행 결과 스크린샷 
 <p align="center">
     <img width="808" height="647" alt="load_balancing" src="https://github.com/user-attachments/assets/6524794a-e7a6-43c7-9c69-8305b2f61ad5" />
+    로드밸런싱 성공 화면
 </p>
+
+
 
 <p align="center">
 <img width="1280" height="674" alt="grafana_result" src="https://github.com/user-attachments/assets/6f358c9e-bcfc-4583-baba-d9687dad3e5b" />
+    Prometheus&Grafana 모니터링 화면
 </p>
 
 
