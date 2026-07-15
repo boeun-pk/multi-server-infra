@@ -15,8 +15,8 @@ Ubuntu 기반 가상 머신 4대로 로드밸런서·웹서버·DB서버를 분�
     <img width="660" height="481" alt="architecture" src="https://github.com/user-attachments/assets/87a4003b-d94f-4b3d-aac8-b33ddc5fb519" />
 </p>
 
-- 0호기(LB) → 1호기/3호기(Web) → 2호기(DB)
-- 1호기 장애 시 3호기로 자동 전환
+- LB-01 → Web-01/Web-02 → DB-01
+- Web-01 장애 시 Web-02로 자동 전환
 
 
 ## 기술 스택
