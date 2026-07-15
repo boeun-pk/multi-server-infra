@@ -111,8 +111,7 @@ $ git clone -b master https://github.com/[본인계정]/multi-server-infra.git a
 $ cd ansible-workspace
 
 ### 3. Vault 비밀번호 파일 설정
-$ ansible-vault create group_vars/all/vault.yml
-# vault_web01_pass, vault_db01_pass 등 서버별 sudo 비밀번호 입력
+$ ansible-vault create group_vars/all/vault.yml <br> # vault_web01_pass, vault_db01_pass 등 서버별 sudo 비밀번호 입력
 
 ### 4. 인벤토리 확인
 hosts.yml에 정의된 서버 IP가 실제 환경과 일치하는지 확인
