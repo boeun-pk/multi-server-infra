@@ -101,9 +101,31 @@ multi-server-infra/
 <br>
 
 ## 실행 방법
+
+### 1. 사전 준비
+- VirtualBox에 Ubuntu 24.04 VM 4대 생성 (NAT + Host-only 네트워크)
+- 각 서버 SSH 접속 가능 상태, control node(LB)에 Ansible 설치
+
+### 2. 저장소 클론
+$ git clone -b master https://github.com/[본인계정]/multi-server-infra.git ansible-workspace
+$ cd ansible-workspace
+
+### 3. Vault 비밀번호 파일 설정
+$ ansible-vault create group_vars/all/vault.yml
+# vault_web01_pass, vault_db01_pass 등 서버별 sudo 비밀번호 입력
+
+### 4. 인벤토리 확인
+hosts.yml에 정의된 서버 IP가 실제 환경과 일치하는지 확인
+
+### 5. Playbook 실행
 $ ansible-playbook -i hosts.yml site.yml --ask-vault-pass
 
+### 6. 결과 확인
+- 웹 서비스: http://[LB_IP]
+- Prometheus: http://[LB_IP]:9090
+- Grafana: http://[LB_IP]:3000
 <br>
+
 
 ## 실행 결과 스크린샷 
 <p align="center">
