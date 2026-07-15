@@ -107,7 +107,7 @@ multi-server-infra/
 - 각 서버 SSH 접속 가능 상태, control node(LB)에 Ansible 설치
 
 ### 2. 저장소 클론
-$ git clone -b master https://github.com/[본인계정]/multi-server-infra.git ansible-workspace
+$ git clone -b master https://github.com/boeun-pk/multi-server-infra.git ansible-workspace
 $ cd ansible-workspace
 
 ### 3. Vault 비밀번호 파일 설정
